@@ -1,0 +1,6 @@
+lane :bump_version do |options|
+  flutter_bump_version(
+    arguments: options,
+    pubspec: "./pubspec.yaml"
+  )
+end
