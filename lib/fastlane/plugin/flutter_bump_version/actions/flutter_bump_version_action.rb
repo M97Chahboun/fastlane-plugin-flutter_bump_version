@@ -116,7 +116,12 @@ module Fastlane
           args.each do |a|
             case a
             when :bump
-              bump_version.bump_version(arguments[:bump])
+              available_version_options = ['major', 'minor', 'patch', 'build']
+              if available_version_options.include?(arguments[:bump])
+                bump_version.bump_version(arguments[:bump])
+              else
+                UI.message("You pass with bump wrong option, Available options : #{available_version_options}")
+              end
             end
           end
         else
