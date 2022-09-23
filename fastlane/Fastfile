@@ -1,6 +1,12 @@
 lane :bump_version do |options|
-  flutter_bump_version(
+  current_version = flutter_bump_version(
     arguments: options,
     pubspec: "./pubspec.yaml"
   )
+  UI.message(current_version)
+  # TODO : Uncomment this lines if you want to push new version to git remote
+  # if(current_version != 'not_bump' && options[:push])
+  #   git_commit(path: "./pubspec.yaml", message: "bump version to #{current_version} from fastlane")
+  #   push_to_git_remote
+  # end
 end

@@ -94,6 +94,7 @@ module Fastlane
         new_version = "#{@current_version_in_hash['major']}.#{@current_version_in_hash['minor']}.#{@current_version_in_hash['patch']}"
         new_version = @is_build ? new_version + "+#{@current_version_in_hash['build']}" : new_version
         update_pubspec(new_version, current_version)
+        return new_version
       end
 
       def update_pubspec(new_version, current_version)
@@ -118,7 +119,7 @@ module Fastlane
             when :bump
               available_version_options = ['major', 'minor', 'patch', 'build']
               if available_version_options.include?(arguments[:bump])
-                bump_version.bump_version(arguments[:bump])
+                return bump_version.bump_version(arguments[:bump])
               else
                 UI.message("You pass with bump wrong option, Available options : #{available_version_options}")
               end
@@ -127,6 +128,7 @@ module Fastlane
         else
           UI.message("Something wrong, Try: bundle exec fastlane bump_version bump:major,minor,patch or build")
         end
+        return "not_bump"
       end
 
       def self.description

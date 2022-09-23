@@ -16,9 +16,10 @@ Manages Flutter project version
 
 ## Example
 
-Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plugin. Try it by cloning the repo, running `fastlane install_plugins` and `bundle exec fastlane bump_version bump:patch`.
+Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plugin. Try it by cloning the repo, running `fastlane install_plugins` and `bundle exec fastlane bump_version bump:patch push:false`.
 
-You can bump any part of version you want by use instead of patch (major,minor,patch or build)
+You can `bump` any part of version you want by use instead of `patch` (`major`,`minor`,`patch` or `build`)
+And the `push` if `true` plugin will push bump version to git remote if `false` will not push it
 
 ## Issues and Feedback
 
