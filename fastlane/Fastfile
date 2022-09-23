@@ -5,8 +5,7 @@ lane :bump_version do |options|
   )
   UI.message(current_version)
   # TODO : Uncomment this lines if you want to push new version to git remote
-  # Bump version and push to remote
-  # if(current_version != 'not_bump')
+  # if(current_version != 'not_bump' && options[:push])
   #   git_commit(path: "./pubspec.yaml", message: "bump version to #{current_version} from fastlane")
   #   push_to_git_remote
   # end
