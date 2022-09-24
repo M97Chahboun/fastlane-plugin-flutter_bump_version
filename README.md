@@ -20,6 +20,7 @@ Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plu
 
 You can `bump` any part of version you want by use instead of `patch` (`major`,`minor` or `patch`)
 build (version code) auto-increase based on current version code
+if you not pass any option with command will bump build as default
 And the `push` if `true` plugin will push bump version to git remote if `false` will not push it
 
 ## Issues and Feedback
