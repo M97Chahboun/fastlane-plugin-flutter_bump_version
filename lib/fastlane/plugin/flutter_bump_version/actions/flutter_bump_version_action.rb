@@ -104,26 +104,9 @@ module Fastlane
     class FlutterBumpVersionAction < Action
       def self.run(params)
         pubspec_path = params[:pubspec] || '../'
-        arguments = params[:arguments]
-        args = arguments.keys
+        part = params[:part] || "build"
         bump_version = FlutterBumpVersion.new(pubspec_path)
-        # Check if the user has passed additional arguments
-        if args.include?(:bump)
-          args.each do |a|
-            case a
-            when :bump
-              available_version_options = ['major', 'minor', 'patch']
-              if available_version_options.include?(arguments[:bump])
-                return bump_version.bump_version(arguments[:bump])
-              else
-                UI.message("You pass with bump wrong option, Available options : #{available_version_options}")
-              end
-            end
-          end
-        else
-          UI.message("Something wrong, Try: bundle exec fastlane bump_version bump:major,minor or patch")
-        end
-        return "not_bump"
+        bump_version.bump_version(part)
       end
 
       def self.description
@@ -151,10 +134,10 @@ module Fastlane
             type: String
           ),
           FastlaneCore::ConfigItem.new(
-            key: :arguments,
+            key: :part,
             description: "part you want upgrade (major,minor or patch)",
             optional: true,
-            type: Hash
+            type: String
           )
         ]
       end
