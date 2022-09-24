@@ -69,18 +69,13 @@ module Fastlane
       end
 
       def configure_build
-        if @is_build
-          @current_version_in_hash['build'] + 1
-        else
-          @is_major || @is_minor || @is_patch ? 0 : @current_version_in_hash['minor']
-        end
+        @current_version_in_hash['build'] + 1
       end
 
       def bump_version(part)
         @is_major = part == "major"
         @is_minor = part == "minor"
         @is_patch = part == "patch"
-        @is_build = part == "build"
         current_version = @pubspec_yaml_reader.field('version')
         split_current_version = current_version.split(".")
         build_exist = current_version.count("+") != 0
@@ -92,7 +87,7 @@ module Fastlane
         @current_version_in_hash['patch'] = configure_patch
         @current_version_in_hash['build'] = configure_build
         new_version = "#{@current_version_in_hash['major']}.#{@current_version_in_hash['minor']}.#{@current_version_in_hash['patch']}"
-        new_version = @is_build ? new_version + "+#{@current_version_in_hash['build']}" : new_version
+        new_version += "+#{@current_version_in_hash['build']}"
         update_pubspec(new_version, current_version)
         return new_version
       end
@@ -117,7 +112,7 @@ module Fastlane
           args.each do |a|
             case a
             when :bump
-              available_version_options = ['major', 'minor', 'patch', 'build']
+              available_version_options = ['major', 'minor', 'patch']
               if available_version_options.include?(arguments[:bump])
                 return bump_version.bump_version(arguments[:bump])
               else
@@ -126,13 +121,13 @@ module Fastlane
             end
           end
         else
-          UI.message("Something wrong, Try: bundle exec fastlane bump_version bump:major,minor,patch or build")
+          UI.message("Something wrong, Try: bundle exec fastlane bump_version bump:major,minor or patch")
         end
         return "not_bump"
       end
 
       def self.description
-        "Fastlane plugin for upgrade flutter projects version by any part (major,minor,patch or build)"
+        "Fastlane plugin for upgrade flutter projects version by any part (major,minor or patch)"
       end
 
       def self.authors
@@ -157,7 +152,7 @@ module Fastlane
           ),
           FastlaneCore::ConfigItem.new(
             key: :arguments,
-            description: "part you want upgrade (major,minor,patch or build)",
+            description: "part you want upgrade (major,minor or patch)",
             optional: true,
             type: Hash
           )
