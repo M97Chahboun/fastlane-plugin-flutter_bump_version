@@ -1,7 +1,8 @@
 # flutter_bump_version plugin
 
 [![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-flutter_bump_version)
-
+[![Plugin Version](https://badge.fury.io/rb/fastlane-plugin-flutter_bump_version.svg)](https://badge.fury.io/rb/fastlane-plugin-flutter_bump_version)
+[![Test](https://github.com/M97Chahboun/fastlane-plugin-flutter_bump_version/actions/workflows/test.yml/badge.svg)](https://github.com/M97Chahboun/fastlane-plugin-flutter_bump_version/actions/workflows/test.yml)
 ## Getting Started
 
 This project is a [_fastlane_](https://github.com/fastlane/fastlane) plugin. To get started with `fastlane-plugin-flutter_bump_version`, add it to your project by running:
