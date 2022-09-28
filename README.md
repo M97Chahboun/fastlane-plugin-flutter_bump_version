@@ -19,9 +19,20 @@ Manages Flutter project version
 
 Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plugin. Try it by cloning the repo, running `fastlane install_plugins` and `bundle exec fastlane bump_version bump:patch push:false`.
 
-You can `bump` any part of version you want by use instead of `patch` (`major`,`minor` or `patch`)
+You can `bump` multi parts of version you want by use instead of `patch` (`major`,`minor` or `patch`) split it by (,)
+
+As Example :
+
+old version : 1.0.0
+
+```sh
+[bundle exec] fastlane bump_version bump:major,minor,minor,patch
+```
+new version : 2.2.1
+
 build (version code) auto-increase based on current version code
-if you not pass any option with command will bump build as default
+if you not pass any option or wrong option with command will bump build as default
+
 And the `push` if `true` plugin will push bump version to git remote if `false` will not push it
 
 ## Issues and Feedback

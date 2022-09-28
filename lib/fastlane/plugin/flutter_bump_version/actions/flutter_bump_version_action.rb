@@ -48,44 +48,52 @@ module Fastlane
         @pubspec_file_writter = FileWritter.new(pubspec_path)
       end
 
-      def congigure_major
-        return @is_major ? @current_version_in_hash['major'] + 1 : @current_version_in_hash['major']
-      end
-
-      def configure_minor
-        if @is_minor
-          @current_version_in_hash['minor'] + 1
-        else
-          @is_major ? 0 : @current_version_in_hash['minor']
+      def configure_major(part)
+        if part == "major"
+          @current_version_in_hash['major'] += @increase_major
         end
       end
 
-      def configure_patch
-        if @is_patch
-          @current_version_in_hash['patch'] + 1
-        else
-          @is_major || @is_minor ? 0 : @current_version_in_hash['patch']
+      def configure_minor(part)
+        if part == "minor" || part == "major"
+          if @increase_major == 0
+            @current_version_in_hash['minor'] += @increase_minor
+          else
+            @current_version_in_hash['minor'] = @increase_minor
+          end
         end
       end
 
-      def configure_build
-        @current_version_in_hash['build'] + 1
+      def configure_patch(part)
+        if part == "patch" || part == "minor" || part == "major"
+          if @increase_major != 0 || @increase_minor != 0
+            @current_version_in_hash['patch'] = @increase_patch
+          else
+            @current_version_in_hash['patch'] += @increase_patch
+          end
+        end
       end
 
-      def bump_version(part)
-        @is_major = part == "major"
-        @is_minor = part == "minor"
-        @is_patch = part == "patch"
+      def configure_build(bump_build)
+        bump_build ? @current_version_in_hash['build'] + 1 : @current_version_in_hash['build']
+      end
+
+      def bump_version(parts)
+        @increase_major = parts.count("major")
+        @increase_minor = parts.count("minor")
+        @increase_patch = parts.count("patch")
         current_version = @pubspec_yaml_reader.field('version')
         split_current_version = current_version.split(".")
         build_exist = current_version.count("+") != 0
         patch = build_exist ? split_current_version.last.split("+")[0] : split_current_version[2]
-        build = build_exist ? split_current_version.last.split("+")[1] : "0"
+        build = build_exist || @bump_build ? split_current_version.last.split("+")[1] : "0"
         @current_version_in_hash = Hash("major" => split_current_version[0].to_i, "minor" => split_current_version[1].to_i, "patch" => patch.to_i, "build" => build.to_i)
-        @current_version_in_hash['major'] = congigure_major
-        @current_version_in_hash['minor'] = configure_minor
-        @current_version_in_hash['patch'] = configure_patch
-        @current_version_in_hash['build'] = configure_build
+        parts.uniq.sort.reverse_each do |part|
+          configure_major(part)
+          configure_minor(part)
+          configure_patch(part)
+          @current_version_in_hash['build'] = configure_build(parts.uniq.max == part)
+        end
         new_version = "#{@current_version_in_hash['major']}.#{@current_version_in_hash['minor']}.#{@current_version_in_hash['patch']}"
         new_version += "+#{@current_version_in_hash['build']}"
         update_pubspec(new_version, current_version)
@@ -104,9 +112,10 @@ module Fastlane
     class FlutterBumpVersionAction < Action
       def self.run(params)
         pubspec_path = params[:pubspec] || '../'
-        part = params[:part] || "build"
+        parts = params[:parts] || "build"
+        split_parts = parts.split(",")
         bump_version = FlutterBumpVersion.new(pubspec_path)
-        bump_version.bump_version(part)
+        bump_version.bump_version(split_parts)
       end
 
       def self.description
@@ -134,7 +143,7 @@ module Fastlane
             type: String
           ),
           FastlaneCore::ConfigItem.new(
-            key: :part,
+            key: :parts,
             description: "part you want upgrade (major,minor or patch)",
             optional: true,
             type: String
