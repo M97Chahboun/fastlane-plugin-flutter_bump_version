@@ -78,7 +78,7 @@ module Fastlane
         bump_build ? @current_version_in_hash['build'] + 1 : @current_version_in_hash['build']
       end
 
-      def bump_version(parts)
+      def bump_version(parts, bump_build)
         @increase_major = parts.count("major")
         @increase_minor = parts.count("minor")
         @increase_patch = parts.count("patch")
@@ -92,7 +92,7 @@ module Fastlane
           configure_major(part)
           configure_minor(part)
           configure_patch(part)
-          @current_version_in_hash['build'] = configure_build(parts.uniq.max == part)
+          @current_version_in_hash['build'] = configure_build(parts.uniq.max == part && bump_build)
         end
         new_version = "#{@current_version_in_hash['major']}.#{@current_version_in_hash['minor']}.#{@current_version_in_hash['patch']}"
         new_version += "+#{@current_version_in_hash['build']}"
@@ -113,9 +113,10 @@ module Fastlane
       def self.run(params)
         pubspec_path = params[:pubspec] || '../'
         parts = params[:parts] || "build"
+        bump_build = params[:bump_build].to_s.empty? ? true : params[:bump_build]
         split_parts = parts.split(",")
         bump_version = FlutterBumpVersion.new(pubspec_path)
-        bump_version.bump_version(split_parts)
+        bump_version.bump_version(split_parts, bump_build)
       end
 
       def self.description
@@ -147,6 +148,12 @@ module Fastlane
             description: "part you want upgrade (major,minor or patch)",
             optional: true,
             type: String
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :bump_build,
+            description: "handle bump build as default true",
+            optional: true,
+            type: Boolean
           )
         ]
       end
