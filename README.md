@@ -30,10 +30,10 @@ old version : 1.0.0
 ```
 new version : 2.2.1
 
-build (version code) auto-increase based on current version code
+build (version code) auto-increase based on current version code & you can disable it by pass `false` with bump_build parameter
 if you not pass any option or wrong option with command will bump build as default
 
-And the `push` if `true` plugin will push bump version to git remote if `false` will not push it
+And the `push` if `true` plugin will bump version & create tag from it then push to git remote if `false` not do anything
 
 ## Issues and Feedback
 
