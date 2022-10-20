@@ -97,7 +97,7 @@ module Fastlane
         new_version = "#{@current_version_in_hash['major']}.#{@current_version_in_hash['minor']}.#{@current_version_in_hash['patch']}"
         new_version += "+#{@current_version_in_hash['build']}"
         update_pubspec(new_version, current_version)
-        return new_version
+        return Hash(new: new_version, previous: current_version)
       end
 
       def update_pubspec(new_version, current_version)
