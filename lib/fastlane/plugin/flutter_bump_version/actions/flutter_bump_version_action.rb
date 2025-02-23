@@ -175,7 +175,7 @@ module Fastlane
           ),
           FastlaneCore::ConfigItem.new(
             key: :version,
-            description: "Provide a new version to update and automatically update build number",
+            description: "Provide a new version to apply and automatically update build number",
             optional: true,
             type: String
           )
