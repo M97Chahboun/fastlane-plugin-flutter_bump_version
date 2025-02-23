@@ -107,6 +107,19 @@ module Fastlane
         UI.message("Previous app version: #{current_version}")
         UI.message("New app version: #{new_version}")
       end
+
+      def update_provided_version(version, bump_build)
+        split_version = version.split(".")
+        build_exist = version.count("+") != 0
+        patch = build_exist ? split_version.last.split("+")[0] : split_version[2]
+        build = build_exist || @bump_build ? split_version.last.split("+")[1] : "0"
+        @current_version_in_hash = Hash("major" => split_version[0].to_i, "minor" => split_version[1].to_i, "patch" => patch.to_i, "build" => build.to_i)
+        @current_version_in_hash['build'] = configure_build(bump_build)
+        new_version = "#{@current_version_in_hash['major']}.#{@current_version_in_hash['minor']}.#{@current_version_in_hash['patch']}"
+        new_version += "+#{@current_version_in_hash['build']}"
+        update_pubspec(new_version, current_version)
+        return Hash(new: new_version, previous: current_version)
+      end
     end
 
     class FlutterBumpVersionAction < Action
@@ -115,8 +128,13 @@ module Fastlane
         parts = params[:parts] || "build"
         bump_build = params[:bump_build].to_s.empty? ? true : params[:bump_build]
         split_parts = parts.split(",")
+        provided_version = params[:version].empty? ? false : params[:version]
         bump_version = FlutterBumpVersion.new(pubspec_path)
-        bump_version.bump_version(split_parts, bump_build)
+        if provided_version
+          bump_version.update_provided_version(provided_version, bump_build)
+        else
+          bump_version.bump_version(split_parts, bump_build)
+        end
       end
 
       def self.description
@@ -154,6 +172,12 @@ module Fastlane
             description: "handle bump build as default true",
             optional: true,
             type: Boolean
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :version,
+            description: "Provide a new version to update and automatically update build number",
+            optional: true,
+            type: String
           )
         ]
       end
