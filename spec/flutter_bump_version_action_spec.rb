@@ -40,5 +40,20 @@ describe Fastlane::Actions::FlutterBumpVersionAction do
       expect(Fastlane::UI).to receive(:message).with("New app version: 4.1.0+6")
       Fastlane::Actions::FlutterBumpVersionAction.run(pubspec: "./pubspec.yaml", bump_build: false)
     end
+    it 'Bump provided version & Show Previous & New Version' do
+      expect(Fastlane::UI).to receive(:message).with("Previous app version: 4.1.0+6")
+      expect(Fastlane::UI).to receive(:message).with("New app version: 5.3.1+7")
+      Fastlane::Actions::FlutterBumpVersionAction.run(pubspec: "./pubspec.yaml", version: "5.3.1")
+    end
+    it 'Bump provided version with bump_build:false' do
+      expect(Fastlane::UI).to receive(:message).with("Previous app version: 5.3.1+7")
+      expect(Fastlane::UI).to receive(:message).with("New app version: 6.1.2+7")
+      Fastlane::Actions::FlutterBumpVersionAction.run(pubspec: "./pubspec.yaml", version: "6.1.2", bump_build: false)
+    end
+    it 'Errors if wrong version format provided' do
+      expect do
+        Fastlane::Actions::FlutterBumpVersionAction.run(pubspec: "./pubspec.yaml", version: "1.0")
+      end.to raise_error(StandardError, "Invalid version format. Please provide version in format x.x.x")
+    end
   end
 end
