@@ -3,6 +3,7 @@
 [![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-flutter_bump_version)
 [![Plugin Version](https://badge.fury.io/rb/fastlane-plugin-flutter_bump_version.svg)](https://badge.fury.io/rb/fastlane-plugin-flutter_bump_version)
 [![Test](https://github.com/M97Chahboun/fastlane-plugin-flutter_bump_version/actions/workflows/test.yml/badge.svg)](https://github.com/M97Chahboun/fastlane-plugin-flutter_bump_version/actions/workflows/test.yml)
+
 ## Getting Started
 
 This project is a [_fastlane_](https://github.com/fastlane/fastlane) plugin. To get started with `fastlane-plugin-flutter_bump_version`, add it to your project by running:
@@ -21,19 +22,23 @@ Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plu
 
 You can `bump` multi parts of version you want by use instead of `patch` (`major`,`minor` or `patch`) split it by (,)
 
-As Example :
+Example :
 
-old version : 1.0.0
+old version : `1.0.0`
 
 ```sh
 [bundle exec] fastlane bump_version bump:major,minor,minor,patch
 ```
-new version : 2.2.1
 
-build (version code) auto-increase based on current version code & you can disable it by pass `false` with bump_build parameter
-if you not pass any option or wrong option with command will bump build as default
+new version : `2.2.1`
 
-And the `push` if `true` plugin will bump version & create tag from it then push to git remote if `false` not do anything
+## Available options
+
+- `bump_build`: build (version code) auto-increases based on current version code. You can disable it by passing `false` to this parameter. If you don't pass any options, the command will bump the `build` by default.
+- `push`: You can automatically create a tag and push it to git remote if you pass the `push: true` parameter.
+- `version`: provide a version using the SemVer format (`x.x.x`) to be applied to the `pubspec.yaml` file. The build part is managed by the `bump_build` parameter.
+
+See [available options](./lib/fastlane/plugin/flutter_bump_version/actions/flutter_bump_version_action.rb#L159) in the source file for more on available options.
 
 ## Issues and Feedback
 
@@ -50,4 +55,3 @@ For more information about how the `fastlane` plugin system works, check out the
 ## About _fastlane_
 
 _fastlane_ is the easiest way to automate beta deployments and releases for your iOS and Android apps. To learn more, check out [fastlane.tools](https://fastlane.tools).
-
