@@ -107,6 +107,22 @@ module Fastlane
         UI.message("Previous app version: #{current_version}")
         UI.message("New app version: #{new_version}")
       end
+
+      def update_provided_version(provided_version, bump_build)
+        UI.user_error!("Invalid version format. Please provide version in format x.x.x") unless provided_version.match?(/\d+\.\d+\.\d+/)
+
+        current_version = @pubspec_yaml_reader.field('version')
+
+        build_exist = current_version.count("+") != 0
+        build = build_exist || @bump_build ? current_version.split("+")[1] : "0"
+
+        @current_version_in_hash = Hash("build" => build.to_i)
+        @current_version_in_hash['build'] = configure_build(bump_build)
+
+        new_version = "#{provided_version}+#{@current_version_in_hash['build']}"
+        update_pubspec(new_version, current_version)
+        return Hash(new: new_version, previous: current_version)
+      end
     end
 
     class FlutterBumpVersionAction < Action
@@ -115,8 +131,13 @@ module Fastlane
         parts = params[:parts] || "build"
         bump_build = params[:bump_build].to_s.empty? ? true : params[:bump_build]
         split_parts = parts.split(",")
+        provided_version = params[:version].to_s.empty? ? false : params[:version]
         bump_version = FlutterBumpVersion.new(pubspec_path)
-        bump_version.bump_version(split_parts, bump_build)
+        if provided_version
+          bump_version.update_provided_version(provided_version, bump_build)
+        else
+          bump_version.bump_version(split_parts, bump_build)
+        end
       end
 
       def self.description
@@ -154,6 +175,12 @@ module Fastlane
             description: "handle bump build as default true",
             optional: true,
             type: Boolean
+          ),
+          FastlaneCore::ConfigItem.new(
+            key: :version,
+            description: "Provide a new version to apply and automatically update build number",
+            optional: true,
+            type: String
           )
         ]
       end
